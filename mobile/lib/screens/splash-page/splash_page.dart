@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:mobile/core/app_images.dart';
+import 'package:mobile/utils/app_images.dart';
 
 class SplashPage extends StatelessWidget {
   @override
