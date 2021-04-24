@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/screens/signature/signature_list.dart';
+import 'package:mobile/screens/signature/dashboard.dart';
 
 void main() => runApp(Subscriber());
 
@@ -15,7 +15,7 @@ class Subscriber extends StatelessWidget {
           textTheme: ButtonTextTheme.primary,
         ),
       ),
-      home: SignatureList(),
+      home: Dashboard(),
     );
   }
 }

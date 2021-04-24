@@ -15,15 +15,6 @@ module.exports = {
     value: {
       type: Sequelize.FLOAT,
     },
-    type: {
-      type: Sequelize.INTEGER,
-    },
-    expire_date: {
-      type: Sequelize.DATEONLY,
-    },
-    automatic_renovation: {
-      type: Sequelize.BOOLEAN,
-    },
     created_at: {
       type: Sequelize.DATE,
       allowNull: false,

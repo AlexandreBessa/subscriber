@@ -1,8 +1,6 @@
 import * as Yup from 'yup';
 import Signature from '../../database/models/Signature';
 
-import signatureTypeEnums from '../enums/signatureTypeEnum';
-
 class SignatureValidation {
   async findOne(req) {
     const { id } = req.params;
@@ -24,15 +22,6 @@ class SignatureValidation {
       title: Yup.string().strict().required('Campo Obrigatório'),
       description: Yup.string().strict().required('Campo Obrigatório'),
       value: Yup.number().required('Campo Obrigatório'),
-      type: Yup.string().strict().required('Campo Obrigatório').test('fuel', 'São possíveis valores para tipo: semanal, mensal, anual, única', (value) => {
-        const type = signatureTypeEnums.getValue(value);
-        if (!type) return false;
-        req.body.type = type;
-        return true;
-      }),
-      automaticRenovation: Yup.boolean(),
-      // Adicionar essa validacao
-      // expireDate: Yup.
     });
 
     try {
@@ -67,10 +56,6 @@ class SignatureValidation {
       title: Yup.string().strict(),
       description: Yup.string().strict(),
       value: Yup.number(),
-      type: Yup.number().integer(),
-      automaticRenovation: Yup.boolean(),
-      // Adicionar essa validacao
-      // expireDate: Yup.
     });
 
     try {

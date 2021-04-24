@@ -1,66 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/signature.dart';
 import 'package:mobile/screens/signature/signature_form.dart';
+import 'package:mobile/utils/services/signature_service.dart';
+import 'package:mobile/widgets/centered_message.dart';
+import 'package:mobile/widgets/progress.dart';
 
 const _appBarTitle = 'Assinaturas';
 
-class SignatureList extends StatefulWidget {
-  final List<Signature> _signatures = [];
+class SignatureList extends StatelessWidget {
+  final SignatureService _webClient = SignatureService();
 
-  @override
-  State<StatefulWidget> createState() {
-    return SignatureListState();
-  }
-}
-
-class SignatureListState extends State<SignatureList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(_appBarTitle),
       ),
-      body: ListView.builder(
-        itemCount: widget._signatures.length,
-        itemBuilder: (context, index) {
-          final signature = widget._signatures[index];
-          return SignatureItem(signature);
+      body: FutureBuilder<List<Signature>>(
+        future: _webClient.findAll(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              break;
+            case ConnectionState.waiting:
+              return Progress();
+              break;
+            case ConnectionState.active:
+              break;
+            case ConnectionState.done:
+              if (snapshot.hasData) {
+                final List<Signature> signatures = snapshot.data;
+                if (signatures.isNotEmpty) {
+                  return ListView.builder(
+                    itemBuilder: (context, index) {
+                      final Signature signature = signatures[index];
+                      return Card(
+                        child: ListTile(
+                          leading: Icon(Icons.monetization_on),
+                          title: Text(
+                            signature.title,
+                            style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            signature.value.toString(),
+                            style: TextStyle(
+                              fontSize: 16.0,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    itemCount: signatures.length,
+                  );
+                }
+              }
+              return CenteredMessage(
+                'No transactions found',
+                icon: Icons.warning,
+              );
+              break;
+          }
+
+          return CenteredMessage('Unknown error');
         },
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return SignatureForm();
-          })).then(
-            (signatureReceived) => _reload(signatureReceived),
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => SignatureForm()),
           );
         },
-      ),
-    );
-  }
-
-  void _reload(Signature signatureReceived) {
-    if (signatureReceived != null) {
-      setState(() {
-        widget._signatures.add(signatureReceived);
-      });
-    }
-  }
-}
-
-class SignatureItem extends StatelessWidget {
-  final Signature _signature;
-
-  SignatureItem(this._signature);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        leading: Icon(Icons.monetization_on),
-        title: Text(_signature.title.toString()),
-        subtitle: Text(_signature.value.toString()),
       ),
     );
   }
